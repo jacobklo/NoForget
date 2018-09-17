@@ -4,6 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.time.LocalDateTime
 
+// TODO : linking problem!! has to copy to this diretory for now
+
 // LINK Gson tutorial : http://www.studytrails.com/java/json/java-google-json-introduction/
 fun main( args: Array<String>) {
     val datasets = ArrayList<MemoryEntry>()

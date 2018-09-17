@@ -8,29 +8,33 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class MainActivity : AppCompatActivity() {
 
   val LOG_TAG = "NoForget Log"
+  var m_CurrentMemoryEntryCount = 0;
+  val m_MemoryData = MemoryData(0, ArrayList<MemoryEntry>() )
 
   private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
     when (item.itemId) {
       R.id.navigation_home -> {
-        message.setText(R.string.title_home)
+        create_group.visibility = View.INVISIBLE
         return@OnNavigationItemSelectedListener true
       }
-      R.id.navigation_dashboard -> {
-        message.setText(R.string.title_dashboard)
+      R.id.navigation_create -> {
+        create_group.visibility = View.VISIBLE
         return@OnNavigationItemSelectedListener true
       }
       R.id.navigation_notifications -> {
-        message.setText(R.string.title_notifications)
+        create_group.visibility = View.INVISIBLE
         return@OnNavigationItemSelectedListener true
       }
     }
@@ -41,16 +45,42 @@ class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
-
+    create_group.visibility = View.INVISIBLE
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-    val saveButton: Button = findViewById(R.id.save)
-    saveButton.setOnClickListener { _: View? ->
-      saveToFile(LocalDate.now().toString()+".txt","b")
+    val saveButton: Button = findViewById(R.id.create_save)
+    saveButton.setOnClickListener { _ : View? ->
+      saveToFile(LocalDate.now().toString()+".txt",memoryDataToJson(m_MemoryData))
     }
+
+    val createButton: Button = findViewById(R.id.create_new)
+    createButton.setOnClickListener{ _ : View? ->
+      createNewMemoryEntry()
+    }
+
   }
 
-  fun saveToFile(fileName: String, fileContents: String) {
+  private fun createNewMemoryEntry() {
+    val defaultReminderDates = ArrayList<LocalDateTime>()
+    defaultReminderDates.add(LocalDateTime.now().plusDays(1))
+    defaultReminderDates.add(LocalDateTime.now().plusDays(3))
+    defaultReminderDates.add(LocalDateTime.now().plusDays(7))
+    defaultReminderDates.add(LocalDateTime.now().plusDays(30))
+    defaultReminderDates.add(LocalDateTime.now().plusDays(90))
+    defaultReminderDates.add(LocalDateTime.now().plusDays(365))
+
+    var newMemoryEntry: MemoryEntry = MemoryEntry(m_CurrentMemoryEntryCount
+                                                , LocalDateTime.now()
+            , findViewById<EditText>(R.id.create_name).text.toString()
+            , defaultReminderDates
+            , findViewById<EditText>(R.id.create_data).text.toString()
+    )
+    m_CurrentMemoryEntryCount++
+    m_MemoryData.memory_entries.add(newMemoryEntry)
+  }
+
+
+  private fun saveToFile(fileName: String, fileContents: String) {
     val saveFileDir = File(Environment.getExternalStorageDirectory(), "NoForget")
     if (!saveFileDir.exists() && !saveFileDir?.mkdir()) {
       Log.e(LOG_TAG, "cannot create save file for NoForget")

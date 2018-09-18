@@ -1,5 +1,6 @@
 package net.jacoblo.noforget
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.os.Environment
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
@@ -58,6 +60,25 @@ class MainActivity : AppCompatActivity() {
       createNewMemoryEntry()
     }
 
+    // TEMP
+    val button: Button = findViewById(R.id.button)
+    button.setOnClickListener{ _ : View? ->
+      val dpd = createDatePickerDialog(LocalDateTime.now().plusDays(1), findViewById(R.id.create_data) as EditText)
+      dpd.show()
+    }
+
+
+
+  }
+
+  private fun createDatePickerDialog(defaultDate: LocalDateTime, dateEntry: EditText): DatePickerDialog {
+    val lis = DatePickerDialog.OnDateSetListener {
+      view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
+      // REMEMBER : month and day started at zero
+      dateEntry.setText( LocalDate.of(year, monthOfYear +1, dayOfMonth).toString() )
+    }
+    // REMEMBER : month and day started at 1
+    return DatePickerDialog(this, lis, defaultDate.year, defaultDate.monthValue - 1, defaultDate.dayOfMonth - 1)
   }
 
   private fun createNewMemoryEntry() {

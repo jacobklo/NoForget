@@ -21,69 +21,78 @@
         app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/navigation" />
 
+    <LinearLayout
+            android:id="@+id/editTextContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <android.support.constraint.Group
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:constraint_referenced_ids="create_save,create_new,create_name,create_data"
-            android:id="@+id/create_group"/>
 
-    <Button
-            android:text="Create"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/create_new" android:layout_marginBottom="32dp"
-            app:layout_constraintBottom_toTopOf="@+id/navigation" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp"/>
-    <Button
-            android:text="save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:id="@+id/create_save"
-            app:layout_constraintBottom_toTopOf="@+id/navigation" android:layout_marginBottom="32dp"
-            android:layout_marginStart="44dp" app:layout_constraintStart_toEndOf="@+id/create_new"/>
-    <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:text="Name"
-            android:ems="10"
-            android:id="@+id/create_name" app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="16dp" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp"/>
-    <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:text="Data"
-            android:ems="10"
-            android:id="@+id/create_data" android:layout_marginTop="32dp"
-            app:layout_constraintTop_toBottomOf="@+id/create_name" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp"/>
-    <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:text="time"
-            android:ems="10"
-            android:id="@+id/create_time" android:layout_marginTop="88dp"
-            app:layout_constraintTop_toBottomOf="@+id/create_name" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp"/>
-    <Button
-            android:text="Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button" android:layout_marginTop="88dp"
-            app:layout_constraintTop_toBottomOf="@+id/create_data" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="148dp"/>
-    <Button
-            android:text="time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/button2" android:layout_marginTop="88dp"
-            app:layout_constraintTop_toBottomOf="@+id/create_data" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="24dp"/>
+        <android.support.constraint.Group
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="create_save,create_new,create_name,create_data"
+                android:id="@+id/create_group"/>
+
+        <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:text="Name"
+                android:ems="10"
+                android:id="@+id/create_name"
+        />
+        <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:text="Data"
+                android:ems="10"
+                android:id="@+id/create_data"
+        />
+        <EditText
+                android:layout_width="140dp"
+                android:layout_height="40dp"
+                android:inputType="none"
+                android:focusable="false"
+                android:text="time"
+                android:ems="10"
+                android:id="@+id/create_time"
+        />
+        <EditText
+                android:layout_width="140dp"
+                android:layout_height="40dp"
+                android:inputType="none"
+                android:focusable="false"
+                android:text="date"
+                android:ems="10"
+                android:id="@+id/create_date"
+        />
+        <Button
+                android:text="--"
+                android:layout_width="65dp"
+                android:layout_height="40dp"
+                android:id="@+id/delete"
+        />
+        <Button
+                android:text="Add Date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/create_add_date"
+        />
+        <Button
+                android:text="Add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/create_new"
+        />
+        <Button
+                android:text="save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/create_save"
+        />
+    </LinearLayout>
 
 
 </android.support.constraint.ConstraintLayout>

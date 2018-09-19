@@ -5,10 +5,13 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.os.Environment
+import android.support.constraint.ConstraintLayout
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
+import android.text.InputType
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -49,6 +52,8 @@ class MainActivity : AppCompatActivity() {
     create_group.visibility = View.INVISIBLE
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
+    val linearLayout = findViewById<ConstraintLayout>(R.id.container)
+
     val saveButton: Button = findViewById(R.id.create_save)
     saveButton.setOnClickListener { _ : View? ->
       saveToFile(LocalDate.now().toString()+".txt",memoryDataToJson(m_MemoryData))
@@ -59,15 +64,31 @@ class MainActivity : AppCompatActivity() {
       createNewMemoryEntry()
     }
 
+    val addDateButton = findViewById<Button>(R.id.create_add_date)
+    create_add_date.setOnClickListener { v : View? ->
+
+      val newDateEditText = EditText(this)
+      newDateEditText.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+      newDateEditText.focusable = View.NOT_FOCUSABLE
+      newDateEditText.setEms(10)
+      newDateEditText.setEnabled(true)
+      newDateEditText.setOnClickListener{ _ : View? ->
+        val dpd = createDatePickerDialog(LocalDateTime.now().plusDays(1), newDateEditText)
+        dpd.show()
+      }
+
+      linearLayout?.addView(newDateEditText)
+      linearLayout?.requestLayout()
+    }
     // TEMP
-    val button: Button = findViewById(R.id.button)
-    button.setOnClickListener{ _ : View? ->
-      val dpd = createDatePickerDialog(LocalDateTime.now().plusDays(1), findViewById<EditText>(R.id.create_data))
+    val dateEditText = findViewById<EditText>(R.id.create_date)
+    dateEditText.setOnClickListener{ _ : View? ->
+      val dpd = createDatePickerDialog(LocalDateTime.now().plusDays(1), dateEditText)
       dpd.show()
     }
-    val button2: Button = findViewById(R.id.button2)
-    button2.setOnClickListener{ _ : View? ->
-      val dpd = createTimePickerDialog(LocalDateTime.now(), findViewById<EditText>(R.id.create_time))
+    val timeEditText = findViewById<EditText>(R.id.create_time)
+    timeEditText.setOnClickListener{ _ : View? ->
+      val dpd = createTimePickerDialog(LocalDateTime.now(), timeEditText)
       dpd.show()
     }
 

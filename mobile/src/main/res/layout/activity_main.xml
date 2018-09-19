@@ -61,13 +61,29 @@
             android:id="@+id/create_data" android:layout_marginTop="32dp"
             app:layout_constraintTop_toBottomOf="@+id/create_name" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="16dp"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="time"
+            android:ems="10"
+            android:id="@+id/create_time" android:layout_marginTop="88dp"
+            app:layout_constraintTop_toBottomOf="@+id/create_name" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"/>
     <Button
             android:text="Button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/button" android:layout_marginTop="38dp"
+            android:id="@+id/button" android:layout_marginTop="88dp"
             app:layout_constraintTop_toBottomOf="@+id/create_data" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="27dp"/>
+            android:layout_marginStart="148dp"/>
+    <Button
+            android:text="time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button2" android:layout_marginTop="88dp"
+            app:layout_constraintTop_toBottomOf="@+id/create_data" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="24dp"/>
 
 
 </android.support.constraint.ConstraintLayout>

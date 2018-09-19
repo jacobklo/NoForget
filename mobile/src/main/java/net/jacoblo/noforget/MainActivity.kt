@@ -1,6 +1,7 @@
 package net.jacoblo.noforget
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.os.Environment
@@ -8,16 +9,14 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 class MainActivity : AppCompatActivity() {
 
@@ -63,12 +62,24 @@ class MainActivity : AppCompatActivity() {
     // TEMP
     val button: Button = findViewById(R.id.button)
     button.setOnClickListener{ _ : View? ->
-      val dpd = createDatePickerDialog(LocalDateTime.now().plusDays(1), findViewById(R.id.create_data) as EditText)
+      val dpd = createDatePickerDialog(LocalDateTime.now().plusDays(1), findViewById<EditText>(R.id.create_data))
+      dpd.show()
+    }
+    val button2: Button = findViewById(R.id.button2)
+    button2.setOnClickListener{ _ : View? ->
+      val dpd = createTimePickerDialog(LocalDateTime.now(), findViewById<EditText>(R.id.create_time))
       dpd.show()
     }
 
 
+  }
 
+  private fun createTimePickerDialog(defaultDate: LocalDateTime, timeEntry: EditText): TimePickerDialog {
+    val lis = TimePickerDialog.OnTimeSetListener {
+      view: TimePicker, hourOfDay: Int, minute: Int ->
+      timeEntry.setText( LocalTime.of(hourOfDay, minute, 0).toString() )
+    }
+    return TimePickerDialog(this, lis, defaultDate.hour, defaultDate.minute, true)
   }
 
   private fun createDatePickerDialog(defaultDate: LocalDateTime, dateEntry: EditText): DatePickerDialog {

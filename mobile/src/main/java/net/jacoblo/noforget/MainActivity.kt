@@ -26,78 +26,112 @@ class MainActivity : AppCompatActivity() {
   val LOG_TAG = "NoForget Log"
   var m_CurrentMemoryEntryCount = 0;
   val m_MemoryData = MemoryData(0, ArrayList<MemoryEntry>() )
+  val m_DefaultReminderDates = createDefaultReminderDates()
 
   private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-    when (item.itemId) {
-      R.id.navigation_home -> {
-        create_group.visibility = View.INVISIBLE
-        return@OnNavigationItemSelectedListener true
+    setVisibilities(item.itemId)
+  }
+
+  private fun setVisibilities(whichNavigationItemSelectedId: Int): Boolean {
+    when (whichNavigationItemSelectedId) {
+      R.id.navigation_home
+    , R.id.navigation_notifications -> {
+        create_name.visibility = View.INVISIBLE
+        create_data.visibility = View.INVISIBLE
+        datesContainer.visibility = View.INVISIBLE
+        buttonsContainers.visibility = View.INVISIBLE
+        return true
       }
       R.id.navigation_create -> {
-        create_group.visibility = View.VISIBLE
-        return@OnNavigationItemSelectedListener true
-      }
-      R.id.navigation_notifications -> {
-        create_group.visibility = View.INVISIBLE
-        return@OnNavigationItemSelectedListener true
+        create_name.visibility = View.VISIBLE
+        create_data.visibility = View.VISIBLE
+        datesContainer.visibility = View.VISIBLE
+        buttonsContainers.visibility = View.VISIBLE
+        return true
       }
     }
-    false
+    return false
   }
 
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
-    create_group.visibility = View.INVISIBLE
+    setVisibilities( R.id.navigation_home )
+
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-    val linearLayout = findViewById<ConstraintLayout>(R.id.container)
-
-    val saveButton: Button = findViewById(R.id.create_save)
-    saveButton.setOnClickListener { _ : View? ->
+    create_save.setOnClickListener { _ : View? ->
       saveToFile(LocalDate.now().toString()+".txt",memoryDataToJson(m_MemoryData))
     }
 
-    val createButton: Button = findViewById(R.id.create_new)
-    createButton.setOnClickListener{ _ : View? ->
+    create_new.setOnClickListener{ _ : View? ->
       createNewMemoryEntry()
     }
 
-    val addDateButton = findViewById<Button>(R.id.create_add_date)
-    create_add_date.setOnClickListener { v : View? ->
-
-      val newDateEditText = EditText(this)
-      newDateEditText.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-      newDateEditText.focusable = View.NOT_FOCUSABLE
-      newDateEditText.setEms(10)
-      newDateEditText.setEnabled(true)
-      newDateEditText.setOnClickListener{ _ : View? ->
-        val dpd = createDatePickerDialog(LocalDateTime.now().plusDays(1), newDateEditText)
-        dpd.show()
-      }
-
-      linearLayout?.addView(newDateEditText)
-      linearLayout?.requestLayout()
+    create_add_date.setOnClickListener { _ : View? ->
+      createNewDateSubView( m_DefaultReminderDates.size )
     }
-    // TEMP
-    val dateEditText = findViewById<EditText>(R.id.create_date)
-    dateEditText.setOnClickListener{ _ : View? ->
-      val dpd = createDatePickerDialog(LocalDateTime.now().plusDays(1), dateEditText)
-      dpd.show()
-    }
-    val timeEditText = findViewById<EditText>(R.id.create_time)
-    timeEditText.setOnClickListener{ _ : View? ->
-      val dpd = createTimePickerDialog(LocalDateTime.now(), timeEditText)
-      dpd.show()
-    }
-
 
   }
 
+  private fun createNewDateSubView( defaultDatesSize: Int ) {
+    val datesLayout = findViewById<LinearLayout>(R.id.datesContainer)
+    val numOfDates = datesLayout.childCount
+
+    val dateTimeGroup = LinearLayout(this)
+    dateTimeGroup.orientation = LinearLayout.HORIZONTAL
+    val dateTimeGroupLL = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+    dateTimeGroup.layoutParams = dateTimeGroupLL
+    datesLayout?.addView(dateTimeGroup)
+
+    val defaultNewDate = if (numOfDates < defaultDatesSize ) m_DefaultReminderDates[numOfDates].toLocalDate().toString() else "Date"
+    val newDateEditText = createCustomPickerEditText(this, defaultNewDate, 0.30f ) {
+      newPickerEditText: EditText ->
+      createDatePickerDialog(LocalDateTime.now().plusDays(1), newPickerEditText).show()
+    }
+
+    val defaultNewTime = if (numOfDates < defaultDatesSize ) m_DefaultReminderDates[numOfDates].toLocalTime().toString() else "Time"
+    val newTimeEditText = createCustomPickerEditText(this, defaultNewTime, 0.30f ) {
+      newPickerEditText: EditText ->
+      createTimePickerDialog(LocalDateTime.now(), newPickerEditText).show()
+    }
+
+    val newDeleteButton = Button(this)
+    newDeleteButton.text = "--"
+    newDeleteButton.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+    val newDeleteButtonLL : LinearLayout.LayoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 0.40f)
+    newDeleteButton.layoutParams = newDeleteButtonLL
+
+    newDeleteButton.setOnClickListener { _ : View? ->
+      datesLayout.removeView(dateTimeGroup)
+    }
+
+    dateTimeGroup.addView(newDateEditText)
+    dateTimeGroup.addView(newTimeEditText)
+    dateTimeGroup.addView(newDeleteButton)
+  }
+
+
+  private fun createCustomPickerEditText(context: Context, text: CharSequence, layoutWeight: Float, f: ( newPickerEditText: EditText ) -> Unit): EditText {
+    val newPickerEditText = EditText(context)
+    newPickerEditText.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+    newPickerEditText.focusable = View.NOT_FOCUSABLE
+    newPickerEditText.setText(text, TextView.BufferType.EDITABLE)
+    newPickerEditText.setEnabled(true)
+    val newPickerEditTextLL : LinearLayout.LayoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, layoutWeight)
+    newPickerEditText.layoutParams = newPickerEditTextLL
+
+    newPickerEditText.setOnClickListener{ _ : View? ->
+      f(newPickerEditText)
+    }
+    return newPickerEditText
+  }
+
+
   private fun createTimePickerDialog(defaultDate: LocalDateTime, timeEntry: EditText): TimePickerDialog {
     val lis = TimePickerDialog.OnTimeSetListener {
-      view: TimePicker, hourOfDay: Int, minute: Int ->
+      _ : TimePicker, hourOfDay: Int, minute: Int ->
       timeEntry.setText( LocalTime.of(hourOfDay, minute, 0).toString() )
     }
     return TimePickerDialog(this, lis, defaultDate.hour, defaultDate.minute, true)
@@ -105,7 +139,7 @@ class MainActivity : AppCompatActivity() {
 
   private fun createDatePickerDialog(defaultDate: LocalDateTime, dateEntry: EditText): DatePickerDialog {
     val lis = DatePickerDialog.OnDateSetListener {
-      view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
+      _ : DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
       // REMEMBER : month and day started at zero
       dateEntry.setText( LocalDate.of(year, monthOfYear +1, dayOfMonth).toString() )
     }
@@ -114,28 +148,31 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun createNewMemoryEntry() {
-    val defaultReminderDates = ArrayList<LocalDateTime>()
-    defaultReminderDates.add(LocalDateTime.now().plusDays(1))
-    defaultReminderDates.add(LocalDateTime.now().plusDays(3))
-    defaultReminderDates.add(LocalDateTime.now().plusDays(7))
-    defaultReminderDates.add(LocalDateTime.now().plusDays(30))
-    defaultReminderDates.add(LocalDateTime.now().plusDays(90))
-    defaultReminderDates.add(LocalDateTime.now().plusDays(365))
 
     var newMemoryEntry: MemoryEntry = MemoryEntry(m_CurrentMemoryEntryCount
                                                 , LocalDateTime.now()
             , findViewById<EditText>(R.id.create_name).text.toString()
-            , defaultReminderDates
+            , m_DefaultReminderDates
             , findViewById<EditText>(R.id.create_data).text.toString()
     )
     m_CurrentMemoryEntryCount++
     m_MemoryData.memory_entries.add(newMemoryEntry)
   }
 
+  private fun createDefaultReminderDates(): ArrayList<LocalDateTime> {
+    val result = ArrayList<LocalDateTime>()
+    result.add(LocalDateTime.now().plusDays(1))
+    result.add(LocalDateTime.now().plusDays(3))
+    result.add(LocalDateTime.now().plusDays(7))
+    result.add(LocalDateTime.now().plusDays(30))
+    result.add(LocalDateTime.now().plusDays(90))
+    result.add(LocalDateTime.now().plusDays(365))
+    return result
+  }
 
   private fun saveToFile(fileName: String, fileContents: String) {
     val saveFileDir = File(Environment.getExternalStorageDirectory(), "NoForget")
-    if (!saveFileDir.exists() && !saveFileDir?.mkdir()) {
+    if (!saveFileDir.exists() && !saveFileDir.mkdir()) {
       Log.e(LOG_TAG, "cannot create save file for NoForget")
       Toast.makeText(applicationContext, "ERROR: cannot save, please able storage permission.", Toast.LENGTH_LONG).show()
     }

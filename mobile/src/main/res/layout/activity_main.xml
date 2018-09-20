@@ -21,78 +21,64 @@
         app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/navigation" />
 
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:ems="10"
+            android:id="@+id/create_name"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:text="Data"
+            android:ems="10"
+            android:id="@+id/create_data"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/create_name"/>
+
     <LinearLayout
-            android:id="@+id/editTextContainer"
+            android:id="@+id/datesContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:layout_editor_absoluteX="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/create_data">
 
 
-        <android.support.constraint.Group
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="create_save,create_new,create_name,create_data"
-                android:id="@+id/create_group"/>
+    </LinearLayout>
 
-        <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:text="Name"
-                android:ems="10"
-                android:id="@+id/create_name"
-        />
-        <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:text="Data"
-                android:ems="10"
-                android:id="@+id/create_data"
-        />
-        <EditText
-                android:layout_width="140dp"
-                android:layout_height="40dp"
-                android:inputType="none"
-                android:focusable="false"
-                android:text="time"
-                android:ems="10"
-                android:id="@+id/create_time"
-        />
-        <EditText
-                android:layout_width="140dp"
-                android:layout_height="40dp"
-                android:inputType="none"
-                android:focusable="false"
-                android:text="date"
-                android:ems="10"
-                android:id="@+id/create_date"
-        />
-        <Button
-                android:text="--"
-                android:layout_width="65dp"
-                android:layout_height="40dp"
-                android:id="@+id/delete"
-        />
+
+    <LinearLayout
+            android:id="@+id/buttonsContainers"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            tools:layout_editor_absoluteX="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/navigation">
         <Button
                 android:text="Add Date"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/create_add_date"
         />
         <Button
                 android:text="Add"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/create_new"
         />
         <Button
                 android:text="save"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/create_save"
         />
-    </LinearLayout>
 
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

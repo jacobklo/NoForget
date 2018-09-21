@@ -6,7 +6,9 @@ import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
@@ -14,6 +16,8 @@ import java.io.FileOutputStream
 import java.io.OutputStreamWriter
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 class MainActivity : AppCompatActivity() {
 
@@ -69,12 +73,37 @@ class MainActivity : AppCompatActivity() {
 
   }
 
+  private fun convertDatesViewGroupToDatesArray( dateTimeGroup: ViewGroup): ArrayList<LocalDateTime>  {
+
+    val result = ArrayList<LocalDateTime>()
+
+    for ( i in 0..dateTimeGroup.childCount ) {
+
+      // check if actually LinearLayout
+      if ( dateTimeGroup.getChildAt(i) !is LinearLayout) {
+        return result; //Empty as not dateTimeGroup
+      }
+
+      val child = dateTimeGroup.getChildAt(i) as LinearLayout;
+      val dateEditText = child.getChildAt(0) as EditText;
+      val timeEditText = child.getChildAt(1) as EditText;
+
+      Toast.makeText(this,dateEditText.text.toString() + " " + timeEditText.text.toString(), Toast.LENGTH_LONG).show()
+      val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.nnn")
+      try {
+        val childLocalDateTime = LocalDateTime.parse(dateEditText.text.toString() + " " + timeEditText.text.toString(), dateTimeFormatter)
+        result.add(childLocalDateTime)
+      }catch ( dtpe: DateTimeParseException) {}
+    }
+    return result
+  }
+
   private fun createNewMemoryEntry() {
 
     var newMemoryEntry: MemoryEntry = MemoryEntry(m_CurrentMemoryEntryCount
                                                 , LocalDateTime.now()
             , findViewById<EditText>(R.id.create_name).text.toString()
-            , m_DefaultReminderDates
+            , convertDatesViewGroupToDatesArray(datesContainer)
             , findViewById<EditText>(R.id.create_data).text.toString()
     )
     m_CurrentMemoryEntryCount++

@@ -25,18 +25,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:text="Name"
             android:ems="10"
             android:id="@+id/create_name"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
+            android:hint="Name"/>
     <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:text="Data"
             android:ems="10"
             android:id="@+id/create_data"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/create_name"/>
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/create_name"
+            android:hint="Data"/>
 
     <LinearLayout
             android:id="@+id/datesContainer"
@@ -70,6 +70,13 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:id="@+id/create_new"
+        />
+        <Button
+                android:text="Clear"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:id="@+id/create_delete"
         />
         <Button
                 android:text="save"

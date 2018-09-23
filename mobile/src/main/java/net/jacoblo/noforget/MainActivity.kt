@@ -13,10 +13,6 @@ class MainActivity : AppCompatActivity() {
   var m_CurrentMemoryEntryCount = 0;
   val m_MemoryData = MemoryData(0, ArrayList<MemoryEntry>() )
 
-  internal lateinit var m_TitleViewAdapter: RecyclerView.Adapter<*>
-  internal lateinit var m_TitleViewManager: RecyclerView.LayoutManager
-
-
   private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
     setVisibilities(item.itemId)
   }

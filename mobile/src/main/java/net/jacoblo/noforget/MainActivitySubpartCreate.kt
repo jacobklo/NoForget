@@ -79,8 +79,7 @@ internal fun MainActivity.createNewMemoryEntry() {
 
   // clear
   clearUnsavedEntry()
-
-  m_TitleViewAdapter.notifyDataSetChanged()
+  populateMemoryEntryList( calcUpcomingReminders(m_MemoryData) )
 }
 
 

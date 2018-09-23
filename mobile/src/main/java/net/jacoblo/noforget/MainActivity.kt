@@ -3,6 +3,7 @@ package net.jacoblo.noforget
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -11,6 +12,10 @@ class MainActivity : AppCompatActivity() {
   val LOG_TAG = "NoForget Log"
   var m_CurrentMemoryEntryCount = 0;
   val m_MemoryData = MemoryData(0, ArrayList<MemoryEntry>() )
+
+  internal lateinit var m_TitleViewAdapter: RecyclerView.Adapter<*>
+  internal lateinit var m_TitleViewManager: RecyclerView.LayoutManager
+
 
   private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
     setVisibilities(item.itemId)
@@ -24,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         create_data.visibility = View.INVISIBLE
         datesContainer.visibility = View.INVISIBLE
         buttonsContainers.visibility = View.INVISIBLE
+        memory_titles.visibility = View.VISIBLE
         return true
       }
       R.id.navigation_create -> {
@@ -31,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         create_data.visibility = View.VISIBLE
         datesContainer.visibility = View.VISIBLE
         buttonsContainers.visibility = View.VISIBLE
+        memory_titles.visibility = View.INVISIBLE
         return true
       }
     }
@@ -46,6 +53,8 @@ class MainActivity : AppCompatActivity() {
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
     onCreateCreatePart()
+
+    onCreateHomePart()
   }
 
 }

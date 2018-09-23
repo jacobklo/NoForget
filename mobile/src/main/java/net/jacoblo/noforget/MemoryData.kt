@@ -3,6 +3,7 @@ package net.jacoblo.noforget
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 // TODO : linking problem!! has to copy to this diretory for now
 
@@ -34,6 +35,30 @@ fun readJsonToMemoryData(memoryDataJson: String?): MemoryData {
   val gson: Gson = gsonBuilder.create();
   val md: MemoryData = gson.fromJson(memoryDataJson, MemoryData::class.java)
   return md
+}
+
+fun calcUpcomingReminders( memory_data: MemoryData ): List<MemoryEntry> {
+  return memory_data.memory_entries.filter {
+    me: MemoryEntry ->
+    var hasFutureReminderDate = false
+    for ( ldt: LocalDateTime in me.reminder_dates) {
+      if ( ldt > LocalDateTime.now() ) {
+        hasFutureReminderDate = true
+      }
+    }
+    hasFutureReminderDate
+  }.sortedBy {
+    me: MemoryEntry ->
+    var earliestReminderForThis: LocalDateTime? = null
+    for ( ldt: LocalDateTime in me.reminder_dates) {
+      if ( ldt > LocalDateTime.now() ) {
+        earliestReminderForThis = ldt
+        break
+      }
+    }
+    val zoneId = ZoneId.systemDefault()
+    earliestReminderForThis!!.atZone(zoneId).toEpochSecond()
+  }
 }
 
 data class MemoryData(val memory_data_id: Int

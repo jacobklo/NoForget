@@ -35,7 +35,7 @@ internal fun MainActivity.createDefaultReminderDates(): ArrayList<LocalDateTime>
 
 internal fun MainActivity.onCreateCreatePart() {
   create_save.setOnClickListener { _ : View? ->
-    saveToFile(LocalDate.now().toString()+".txt",memoryDataToJson(m_MemoryData))
+    saveToFile("NoForget.txt",memoryDataToJson(m_MemoryData))
   }
 
   create_new.setOnClickListener{ _ : View? ->
@@ -79,6 +79,8 @@ internal fun MainActivity.createNewMemoryEntry() {
 
   // clear
   clearUnsavedEntry()
+
+  m_TitleViewAdapter.notifyDataSetChanged()
 }
 
 
@@ -110,10 +112,11 @@ internal fun MainActivity.createNewDateSubView( defaultDatesSize: Int ) {
   val datesLayout = findViewById<LinearLayout>(R.id.datesContainer)
   val numOfDates = datesLayout.childCount
 
-  val dateTimeGroup = LinearLayout(this)
-  dateTimeGroup.orientation = LinearLayout.HORIZONTAL
-  val dateTimeGroupLL = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
-  dateTimeGroup.layoutParams = dateTimeGroupLL
+  val dateTimeGroup = LinearLayout(this).apply {
+    orientation = LinearLayout.HORIZONTAL
+    val dateTimeGroupLL = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+    layoutParams = dateTimeGroupLL
+  }
   datesLayout?.addView(dateTimeGroup)
 
   var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
@@ -130,14 +133,15 @@ internal fun MainActivity.createNewDateSubView( defaultDatesSize: Int ) {
     createTimePickerDialog(LocalDateTime.now(), newPickerEditText).show()
   }
 
-  val newDeleteButton = Button(this)
-  newDeleteButton.text = "--"
-  newDeleteButton.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-  val newDeleteButtonLL : LinearLayout.LayoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 0.40f)
-  newDeleteButton.layoutParams = newDeleteButtonLL
+  val newDeleteButton = Button(this).apply {
+    text = "--"
+    setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+    val newDeleteButtonLL : LinearLayout.LayoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 0.40f)
+    layoutParams = newDeleteButtonLL
 
-  newDeleteButton.setOnClickListener { _ : View? ->
-    datesLayout.removeView(dateTimeGroup)
+    setOnClickListener { _ : View? ->
+      datesLayout.removeView(dateTimeGroup)
+    }
   }
 
   dateTimeGroup.addView(newDateEditText)
@@ -146,14 +150,15 @@ internal fun MainActivity.createNewDateSubView( defaultDatesSize: Int ) {
 }
 
 internal fun MainActivity.createCustomPickerEditText(context: Context, text: CharSequence, layoutWeight: Float, f: (newPickerEditText: EditText ) -> Unit): EditText {
-  val newPickerEditText = EditText(context)
-  newPickerEditText.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-  newPickerEditText.focusable = View.NOT_FOCUSABLE
-  newPickerEditText.setText(text, TextView.BufferType.EDITABLE)
-  newPickerEditText.setEnabled(true)
-  val newPickerEditTextLL : LinearLayout.LayoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, layoutWeight)
-  newPickerEditText.layoutParams = newPickerEditTextLL
-
+  // REMEMBER : use .apply{} kotlin method to save code
+  val newPickerEditText = EditText(context).apply {
+    setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+    focusable = View.NOT_FOCUSABLE
+    setText(text, TextView.BufferType.EDITABLE)
+    setEnabled(true)
+    val newPickerEditTextLL : LinearLayout.LayoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, layoutWeight)
+    layoutParams = newPickerEditTextLL
+  }
   newPickerEditText.setOnClickListener{ _ : View? ->
     f(newPickerEditText)
   }

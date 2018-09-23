@@ -87,5 +87,14 @@
         />
 
     </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="447dp"
+            android:id="@+id/memory_titles"
+            android:scrollbars="vertical"
+            tools:layout_editor_absoluteY="8dp"
+            tools:layout_editor_absoluteX="223dp"
+    >
+    </android.support.v7.widget.RecyclerView>
 
 </android.support.constraint.ConstraintLayout>

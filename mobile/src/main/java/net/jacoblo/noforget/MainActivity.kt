@@ -54,4 +54,12 @@ class MainActivity : AppCompatActivity() {
     onCreateHomePart()
   }
 
+  override fun onStart() {
+    super.onStart()
+
+    val fragmentTrasaction = fragmentManager.beginTransaction()
+    fragmentTrasaction.add(R.id.memory_entry_list_fragment, MemoryEntryListFragment());
+    fragmentTrasaction.commit()
+  }
+
 }

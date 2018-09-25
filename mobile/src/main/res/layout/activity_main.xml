@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
@@ -7,7 +8,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
+    <fragment
+            android:id="@+id/memory_entry_list_fragment"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            class="net.jacoblo.noforget.MemoryEntryListFragment"
+            tools:layout="@layout/memory_entry_list">
+    </fragment>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"

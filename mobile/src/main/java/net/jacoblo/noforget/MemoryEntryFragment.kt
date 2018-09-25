@@ -40,7 +40,6 @@ class MemoryEntryFragment: Fragment() {
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
-    arguments?.setText()
   }
 
   public interface OnItemSelectedListener {

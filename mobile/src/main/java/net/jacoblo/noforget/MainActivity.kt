@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         create_data.visibility = View.INVISIBLE
         datesContainer.visibility = View.INVISIBLE
         buttonsContainers.visibility = View.INVISIBLE
-        memory_titles.visibility = View.VISIBLE
+        memory_entry_list_placeholder.visibility = View.VISIBLE
         return true
       }
       R.id.navigation_create -> {
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         create_data.visibility = View.VISIBLE
         datesContainer.visibility = View.VISIBLE
         buttonsContainers.visibility = View.VISIBLE
-        memory_titles.visibility = View.INVISIBLE
+        memory_entry_list_placeholder.visibility = View.INVISIBLE
         return true
       }
     }
@@ -51,15 +51,10 @@ class MainActivity : AppCompatActivity() {
 
     onCreateCreatePart()
 
-    onCreateHomePart()
-  }
-
-  override fun onStart() {
-    super.onStart()
-
-    val fragmentTrasaction = fragmentManager.beginTransaction()
-    fragmentTrasaction.add(R.id.memory_entry_list_fragment, MemoryEntryListFragment());
-    fragmentTrasaction.commit()
+    // Home page
+    fragmentManager.beginTransaction()
+            .add( R.id.memory_entry_list_placeholder, MemoryEntryListFragment(), "MemoryEntryListFragment")
+            .commit()
   }
 
 }

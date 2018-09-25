@@ -8,15 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <fragment
-            android:id="@+id/memory_entry_list_fragment"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            class="net.jacoblo.noforget.MemoryEntryListFragment"
-            tools:layout="@layout/memory_entry_list">
-    </fragment>
-
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
         android:layout_width="0dp"
@@ -28,6 +19,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:menu="@menu/navigation" />
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/memory_entry_list_placeholder">
+
+    </LinearLayout>
 
     <EditText
             android:layout_width="wrap_content"
@@ -53,7 +51,6 @@
             android:orientation="vertical"
             tools:layout_editor_absoluteX="0dp"
             app:layout_constraintTop_toBottomOf="@+id/create_data">
-
 
     </LinearLayout>
 
@@ -95,14 +92,5 @@
         />
 
     </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="447dp"
-            android:id="@+id/memory_titles"
-            android:scrollbars="vertical"
-            tools:layout_editor_absoluteY="8dp"
-            tools:layout_editor_absoluteX="223dp"
-    >
-    </android.support.v7.widget.RecyclerView>
 
 </android.support.constraint.ConstraintLayout>

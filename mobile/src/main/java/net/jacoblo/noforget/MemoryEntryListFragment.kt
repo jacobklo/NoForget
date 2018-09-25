@@ -2,16 +2,19 @@ package net.jacoblo.noforget
 
 import android.app.Fragment
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.support.v7.widget.RecyclerView
+import android.view.*
+import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.memory_entry_list.*
+import java.time.Duration
 import java.time.LocalDateTime
+import java.time.ZoneId
 
 class MemoryEntryListFragment: Fragment() {
 
@@ -21,13 +24,12 @@ class MemoryEntryListFragment: Fragment() {
     return view
   }
 
-  override fun onAttach(context: Context?) {
-    super.onAttach(context)
-
-    // TODO test
-    val me = MemoryEntry(10, LocalDateTime.now(),"Item 10", ArrayList<LocalDateTime>(), "Data 10")
-    if ( context != null) {
-      populateMemoryEntryList(listOf(me), context)
+  // REMEMBER : Others setMessage using Bundle and goes here to handle
+  override fun onActivityCreated(savedInstanceState: Bundle?) {
+    super.onActivityCreated(savedInstanceState)
+    val bundle: Bundle? = arguments
+    if (bundle != null ) {
+      // Do something
     }
   }
 
@@ -36,18 +38,18 @@ class MemoryEntryListFragment: Fragment() {
     val titleViewManager = LinearLayoutManager(context)
     val titleViewAdapter = MemoryTitleAdapter(upcomingMemoryEntries)
 
-    memory_entry_list_layout.apply {
+    memory_entry_list_fragment.apply {
       setHasFixedSize(true)
       layoutManager = titleViewManager
       itemAnimator = DefaultItemAnimator()
       adapter = titleViewAdapter
-      addItemDecoration( DividerItemDecoration( activity.applicationContext, LinearLayoutManager.VERTICAL ))
+      addItemDecoration( DividerItemDecoration( context, LinearLayoutManager.VERTICAL ))
       // REMEMBER : instantiate anonymous class using key word object
-      addOnItemTouchListener(RecyclerTouchListener(activity.applicationContext, this, object : RecyclerTouchListener.ClickListener {
+      addOnItemTouchListener(RecyclerTouchListener(context, this, object : RecyclerTouchListener.ClickListener {
         override fun onClick(view: View, position: Int) {
           if (position < upcomingMemoryEntries.size) {
             val titleNow = upcomingMemoryEntries[position].entry_name
-            Toast.makeText(activity.applicationContext,  "$titleNow is selected!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,  "$titleNow is selected!", Toast.LENGTH_SHORT).show()
           }
         }
 
@@ -56,4 +58,77 @@ class MemoryEntryListFragment: Fragment() {
     }
   }
 
+}
+
+class MemoryTitleAdapter(private val memoryTitleList: List<MemoryEntry>) : RecyclerView.Adapter<MemoryTitleAdapter.MyViewHolder>() {
+
+  inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    var entryTitle: TextView = view.findViewById<View>(R.id.memory_list_title) as TextView
+    var entryData: TextView = view.findViewById<View>(R.id.memory_list_data) as TextView
+    var entryReminderLeft: TextView = view.findViewById<View>(R.id.memory_list_reminder_left) as TextView
+
+  }
+
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+    val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.memory_list_row, parent, false)
+
+    return MyViewHolder(itemView)
+  }
+
+  override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+    val currentEntry = memoryTitleList[position]
+    holder.entryTitle.text = currentEntry.entry_name
+    holder.entryData.text = currentEntry.entry_data
+
+    val zoneId = ZoneId.systemDefault()
+    var remindingTimeLeftThisEntry: LocalDateTime = currentEntry.reminder_dates.first {
+      it -> it.atZone(zoneId).toEpochSecond() > LocalDateTime.now().atZone(zoneId).toEpochSecond()
+    }
+    val reminderString = "" + calcDuration( LocalDateTime.now(), remindingTimeLeftThisEntry).toHours().toString() + " hours left"
+    holder.entryReminderLeft.text = reminderString
+  }
+
+  override fun getItemCount(): Int {
+    return memoryTitleList.size
+  }
+}
+
+class RecyclerTouchListener(context: Context, recyclerView: RecyclerView, private val clickListener: ClickListener?)
+  : RecyclerView.OnItemTouchListener {
+
+  private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+    override fun onSingleTapUp(e: MotionEvent): Boolean {
+      return true
+    }
+
+    override fun onLongPress(e: MotionEvent) {
+      val child = recyclerView.findChildViewUnder(e.x, e.y)
+      if (child != null && clickListener != null) {
+        clickListener.onLongClick(child, recyclerView.getChildAdapterPosition(child))
+      }
+    }
+  })
+
+  override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+
+    val child = rv.findChildViewUnder(e.x, e.y)
+    if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+      clickListener.onClick(child, rv.getChildAdapterPosition(child))
+    }
+    return false
+  }
+
+  override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
+
+  override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+
+  interface ClickListener {
+    fun onClick(view: View, position: Int)
+    fun onLongClick(view: View?, position: Int)
+  }
+}
+
+fun calcDuration(ldt1: LocalDateTime, ldt2: LocalDateTime): Duration {
+  return Duration.between( ldt1, ldt2 )
 }

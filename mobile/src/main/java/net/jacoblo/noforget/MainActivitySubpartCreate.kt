@@ -3,6 +3,7 @@ package net.jacoblo.noforget
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.View
@@ -68,7 +69,7 @@ internal fun MainActivity.saveToFile(fileName: String, fileContents: String) {
 
 internal fun MainActivity.createNewMemoryEntry() {
 
-  var newMemoryEntry: MemoryEntry = MemoryEntry(m_CurrentMemoryEntryCount
+  var newMemoryEntry = MemoryEntry(m_CurrentMemoryEntryCount
           , LocalDateTime.now()
           , findViewById<EditText>(R.id.create_name).text.toString()
           , convertDatesViewGroupToDatesArray(datesContainer)
@@ -79,7 +80,10 @@ internal fun MainActivity.createNewMemoryEntry() {
 
   // clear
   clearUnsavedEntry()
-  populateMemoryEntryList( calcUpcomingReminders(m_MemoryData) )
+
+
+  var melf: MemoryEntryListFragment = fragmentManager.findFragmentByTag("MemoryEntryListFragment") as MemoryEntryListFragment
+  melf.populateMemoryEntryList( calcUpcomingReminders(m_MemoryData), this )
 }
 
 

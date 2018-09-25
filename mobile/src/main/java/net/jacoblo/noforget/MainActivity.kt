@@ -7,9 +7,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
+val LOG_TAG = "NoForget Log"
+
 class MainActivity : AppCompatActivity() {
 
-  val LOG_TAG = "NoForget Log"
   var m_CurrentMemoryEntryCount = 0;
   val m_MemoryData = MemoryData(0, ArrayList<MemoryEntry>() )
 

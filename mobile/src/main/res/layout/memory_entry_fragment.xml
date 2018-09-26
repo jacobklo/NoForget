@@ -2,7 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                              xmlns:app="http://schemas.android.com/apk/res-auto"
                                              xmlns:tools="http://schemas.android.com/tools"
-                                             android:id="@+id/memory_entry_containers"
+                                             android:id="@+id/memory_entry_item"
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
                                              tools:context=".MemoryEntryFragment">
@@ -40,9 +40,23 @@
           android:id="@+id/buttonsContainers"
           android:orientation="horizontal"
           android:layout_width="match_parent"
-          android:layout_height="50dp"
+          android:layout_height="wrap_content"
           tools:layout_editor_absoluteX="0dp" app:layout_constraintBottom_toBottomOf="parent"
   >
+    <Button
+            android:text="Add Date"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/memory_entry_fragment_add_date"
+    />
+    <Button
+            android:text="Save"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/memory_entry_fragment_date"
+    />
     <Button
             android:text="Delete"
             android:layout_width="0dp"

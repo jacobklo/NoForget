@@ -22,18 +22,12 @@ class MainActivity : AppCompatActivity() {
     when (whichNavigationItemSelectedId) {
       R.id.navigation_home
     , R.id.navigation_notifications -> {
-        create_name.visibility = View.INVISIBLE
-        create_data.visibility = View.INVISIBLE
-        datesContainer.visibility = View.INVISIBLE
-        buttonsContainers.visibility = View.INVISIBLE
+        memory_entry_item_placeholder.visibility = View.INVISIBLE
         memory_entry_list_placeholder.visibility = View.VISIBLE
         return true
       }
       R.id.navigation_create -> {
-        create_name.visibility = View.VISIBLE
-        create_data.visibility = View.VISIBLE
-        datesContainer.visibility = View.VISIBLE
-        buttonsContainers.visibility = View.VISIBLE
+        memory_entry_item_placeholder.visibility = View.VISIBLE
         memory_entry_list_placeholder.visibility = View.INVISIBLE
         return true
       }
@@ -49,11 +43,14 @@ class MainActivity : AppCompatActivity() {
 
     navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-    onCreateCreatePart()
-
     // Home page
     fragmentManager.beginTransaction()
             .add( R.id.memory_entry_list_placeholder, MemoryEntryListFragment(), "MemoryEntryListFragment")
+            .commit()
+
+    // Create new Memory Entry Item page
+    fragmentManager.beginTransaction()
+            .add( R.id.memory_entry_item_placeholder, MemoryEntryFragment(), "MemoryEntryFragment")
             .commit()
   }
 

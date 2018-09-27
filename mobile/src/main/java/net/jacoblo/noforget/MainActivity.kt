@@ -3,9 +3,10 @@ package net.jacoblo.noforget
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import java.time.LocalDateTime
+
 
 val LOG_TAG = "NoForget Log"
 
@@ -48,9 +49,19 @@ class MainActivity : AppCompatActivity() {
             .add( R.id.memory_entry_list_placeholder, MemoryEntryListFragment(), "MemoryEntryListFragment")
             .commit()
 
+    // Add new Memory Entry Object for Create page
+    val newMemoryEntry = MemoryEntry(m_MemoryData.memory_entries.size, LocalDateTime.now(),"New Entry Name", ArrayList<LocalDateTime>(), "Reminder1")
+    m_MemoryData.memory_entries.add( newMemoryEntry )
+
+    // REMEMBER : Correct way to pass data to fragment
+    val memoryEntryFragmentBundle = Bundle()
+    memoryEntryFragmentBundle.putString( "MemoryEntryJson", memoryEntryToJson( newMemoryEntry ))
+
     // Create new Memory Entry Item page
+    val newMemoryEntryFragment = MemoryEntryFragment()
+    newMemoryEntryFragment.arguments = memoryEntryFragmentBundle
     fragmentManager.beginTransaction()
-            .add( R.id.memory_entry_item_placeholder, MemoryEntryFragment(), "MemoryEntryFragment")
+            .add( R.id.memory_entry_item_placeholder, newMemoryEntryFragment, "MemoryEntryFragment")
             .commit()
   }
 

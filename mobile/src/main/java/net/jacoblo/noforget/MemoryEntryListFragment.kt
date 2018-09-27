@@ -24,15 +24,6 @@ class MemoryEntryListFragment: Fragment() {
     return view
   }
 
-  // REMEMBER : Others setMessage using Bundle and goes here to handle
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
-    val bundle: Bundle? = arguments
-    if (bundle != null ) {
-      // Do something
-    }
-  }
-
   fun populateMemoryEntryList(upcomingMemoryEntries: List<MemoryEntry>, context: Context) {
 
     val titleViewManager = LinearLayoutManager(context)

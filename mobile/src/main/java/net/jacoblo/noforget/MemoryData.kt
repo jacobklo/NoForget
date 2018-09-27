@@ -37,6 +37,21 @@ fun readJsonToMemoryData(memoryDataJson: String?): MemoryData {
   return md
 }
 
+// TODO refactor copy methods
+fun memoryEntryToJson(memoryEntry: MemoryEntry): String {
+  val gsonBuilder: GsonBuilder = GsonBuilder()
+  gsonBuilder.setPrettyPrinting().serializeNulls()
+  val gson: Gson = gsonBuilder.create();
+  return gson.toJson(memoryEntry)
+}
+
+fun readJsonToMemoryEntry(memoryEntryJson: String?): MemoryEntry {
+  val gsonBuilder: GsonBuilder = GsonBuilder()
+  val gson: Gson = gsonBuilder.create();
+  val md: MemoryEntry = gson.fromJson(memoryEntryJson, MemoryEntry::class.java)
+  return md
+}
+
 fun calcUpcomingReminders( memory_data: MemoryData ): List<MemoryEntry> {
   return memory_data.memory_entries.filter {
     me: MemoryEntry ->

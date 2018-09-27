@@ -5,7 +5,6 @@ import android.app.Fragment
 import android.app.TimePickerDialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +14,9 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-class MemoryEntryFragment: Fragment() {
+class MemoryEntryFragment : Fragment() {
 
+  var m_MemoryEntry: MemoryEntry? = null
   var m_DefaultReminderDates: ArrayList<LocalDateTime> = createDefaultReminderDates()
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -25,12 +25,35 @@ class MemoryEntryFragment: Fragment() {
 
     val addDateButton = view.findViewById<Button>( R.id.memory_entry_fragment_add_date )
     addDateButton?.setOnClickListener{
-      createNewDateSubView( m_DefaultReminderDates.size )
+      createNewDateSubView( m_MemoryEntry!!.reminder_dates, m_DefaultReminderDates )
     }
+
     return view
   }
 
-  private fun createNewDateSubView( defaultDatesSize: Int ) {
+  // REMEMBER : Others setMessage using Bundle and goes here to handle
+  override fun onActivityCreated(savedInstanceState: Bundle?) {
+    super.onActivityCreated(savedInstanceState)
+    val bundle: Bundle? = arguments
+    if (bundle != null ) {
+      m_MemoryEntry = readJsonToMemoryEntry ( bundle.getString( "MemoryEntryJson" ))
+      populateView()
+    }
+  }
+
+  fun populateView() {
+    if (m_MemoryEntry == null ) return
+
+    view.findViewById<EditText>( R.id.memory_entry_fragment_name ).setText( m_MemoryEntry!!.entry_name )
+    view.findViewById<EditText>( R.id.memory_entry_fragment_data ).setText( m_MemoryEntry!!.entry_data )
+
+    for (i in 0 until m_MemoryEntry!!.reminder_dates.size) {
+      createNewDateSubView( m_MemoryEntry!!.reminder_dates, m_DefaultReminderDates )
+    }
+  }
+
+
+  private fun createNewDateSubView( dates: ArrayList<LocalDateTime>, defaultReminderDates: ArrayList<LocalDateTime> ) {
     val datesLayout = view.findViewById<LinearLayout>(R.id.memory_entry_fragment_dates_container)
     if (datesLayout == null ) return
 
@@ -44,17 +67,27 @@ class MemoryEntryFragment: Fragment() {
     datesLayout.addView(dateTimeGroup)
 
     var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val defaultNewDate = if (numOfDates < defaultDatesSize ) m_DefaultReminderDates[numOfDates].format(dateTimeFormatter) else "Date"
-    val newDateEditText = createCustomPickerEditText(activity.applicationContext, defaultNewDate, 0.30f ) {
-      newPickerEditText: EditText ->
-      createDatePickerDialog(LocalDateTime.now().plusDays(1), newPickerEditText, activity.applicationContext).show()
+
+    val defaultNewDate = if (numOfDates < dates.size ) {
+      dates[numOfDates].format(dateTimeFormatter)
+    } else if( numOfDates < defaultReminderDates.size ) {
+      defaultReminderDates[numOfDates].format(dateTimeFormatter)
+    }else "Date"
+
+    val newDateEditText = createCustomPickerEditText(activity.applicationContext, defaultNewDate, 0.30f )
+    newDateEditText.setOnClickListener{
+      createDatePickerDialog(LocalDateTime.now().plusDays(1), newDateEditText, activity.applicationContext).show()
     }
 
     dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-    val defaultNewTime = if (numOfDates < defaultDatesSize ) m_DefaultReminderDates[numOfDates].format(dateTimeFormatter) else "Time"
-    val newTimeEditText = createCustomPickerEditText(activity.applicationContext, defaultNewTime, 0.30f ) {
-      newPickerEditText: EditText ->
-      createTimePickerDialog(LocalDateTime.now(), newPickerEditText, activity.applicationContext).show()
+    val defaultNewTime = if (numOfDates < dates.size ) {
+      dates[numOfDates].format(dateTimeFormatter)
+    } else if( numOfDates < defaultReminderDates.size ) {
+      defaultReminderDates[numOfDates].format(dateTimeFormatter)
+    }else "Time"
+    val newTimeEditText = createCustomPickerEditText(activity.applicationContext, defaultNewTime, 0.30f )
+    newTimeEditText.setOnClickListener{
+      createTimePickerDialog(LocalDateTime.now(), newTimeEditText, activity.applicationContext).show()
     }
 
     val newDeleteButton = Button(activity.applicationContext).apply {
@@ -73,7 +106,7 @@ class MemoryEntryFragment: Fragment() {
     dateTimeGroup.addView(newDeleteButton)
   }
 
-  private fun createCustomPickerEditText(context: Context, text: CharSequence, layoutWeight: Float, f: (newPickerEditText: EditText ) -> Unit): EditText {
+  private fun createCustomPickerEditText(context: Context, text: CharSequence, layoutWeight: Float): EditText {
     // REMEMBER : use .apply{} kotlin method to save code
     val newPickerEditText = EditText(context).apply {
       setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
@@ -83,9 +116,7 @@ class MemoryEntryFragment: Fragment() {
       val newPickerEditTextLL : LinearLayout.LayoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, layoutWeight)
       layoutParams = newPickerEditTextLL
     }
-    newPickerEditText.setOnClickListener{ _ : View? ->
-      f(newPickerEditText)
-    }
+
     return newPickerEditText
   }
 

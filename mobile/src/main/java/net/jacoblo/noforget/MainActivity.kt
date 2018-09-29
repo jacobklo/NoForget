@@ -1,10 +1,16 @@
 package net.jacoblo.noforget
 
 import android.os.Bundle
+import android.os.Environment
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStreamWriter
 import java.time.LocalDateTime
 
 
@@ -76,5 +82,21 @@ class MainActivity : AppCompatActivity() {
 
     var melf: MemoryEntryListFragment = fragmentManager.findFragmentByTag("MemoryEntryListFragment") as MemoryEntryListFragment
     melf.populateMemoryEntryList( calcUpcomingReminders(m_MemoryData), this )
+
+    saveToFile( "NoForget.txt", memoryDataToJson( m_MemoryData ))
   }
+}
+
+private fun saveToFile(fileName: String, fileContents: String) {
+  val saveFileDir = File(Environment.getExternalStorageDirectory(), "NoForget")
+  if (!saveFileDir.exists() && !saveFileDir.mkdir()) {
+    Log.e(LOG_TAG, "cannot create save file for NoForget")
+  }
+
+  val saveFilePath = saveFileDir.absolutePath + "/" + fileName
+  val fos = FileOutputStream(saveFilePath)
+  val osw = OutputStreamWriter(fos)
+  osw.write(fileContents)
+  osw.close()
+
 }

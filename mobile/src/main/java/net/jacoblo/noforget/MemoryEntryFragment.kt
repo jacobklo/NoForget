@@ -67,7 +67,7 @@ class MemoryEntryFragment : Fragment() {
 
     val numOfDates = datesLayout.childCount
 
-    val dateTimeGroup = LinearLayout(activity.applicationContext).apply {
+    val dateTimeGroup = LinearLayout(context).apply {
       orientation = LinearLayout.HORIZONTAL
       val dateTimeGroupLL = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
       layoutParams = dateTimeGroupLL
@@ -82,9 +82,9 @@ class MemoryEntryFragment : Fragment() {
       defaultReminderDates[numOfDates].format(dateTimeFormatter)
     }else "Date"
 
-    val newDateEditText = createCustomPickerEditText(activity.applicationContext, defaultNewDate, 0.30f )
+    val newDateEditText = createCustomPickerEditText( defaultNewDate, 0.30f )
     newDateEditText.setOnClickListener{
-      createDatePickerDialog(LocalDateTime.now().plusDays(1), newDateEditText, activity.applicationContext).show()
+      createDatePickerDialog(LocalDateTime.now().plusDays(1), newDateEditText).show()
     }
 
     dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -93,12 +93,12 @@ class MemoryEntryFragment : Fragment() {
     } else if( numOfDates < defaultReminderDates.size ) {
       defaultReminderDates[numOfDates].format(dateTimeFormatter)
     }else "Time"
-    val newTimeEditText = createCustomPickerEditText(activity.applicationContext, defaultNewTime, 0.30f )
+    val newTimeEditText = createCustomPickerEditText( defaultNewTime, 0.30f )
     newTimeEditText.setOnClickListener{
-      createTimePickerDialog(LocalDateTime.now(), newTimeEditText, activity.applicationContext).show()
+      createTimePickerDialog(LocalDateTime.now(), newTimeEditText).show()
     }
 
-    val newDeleteButton = Button(activity.applicationContext).apply {
+    val newDeleteButton = Button(context).apply {
       text = "--"
       setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
       val newDeleteButtonLL : LinearLayout.LayoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, 0.40f)
@@ -112,9 +112,15 @@ class MemoryEntryFragment : Fragment() {
     dateTimeGroup.addView(newDateEditText)
     dateTimeGroup.addView(newTimeEditText)
     dateTimeGroup.addView(newDeleteButton)
+
+    fragmentManager
+            .beginTransaction()
+            .detach(this)
+            .attach(this)
+            .commit();
   }
 
-  private fun createCustomPickerEditText(context: Context, text: CharSequence, layoutWeight: Float): EditText {
+  private fun createCustomPickerEditText( text: CharSequence, layoutWeight: Float): EditText {
     // REMEMBER : use .apply{} kotlin method to save code
     val newPickerEditText = EditText(context).apply {
       setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
@@ -128,21 +134,23 @@ class MemoryEntryFragment : Fragment() {
     return newPickerEditText
   }
 
-  private fun createTimePickerDialog(defaultDate: LocalDateTime, timeEntry: EditText, context: Context): TimePickerDialog {
+  private fun createTimePickerDialog(defaultDate: LocalDateTime, timeEntry: EditText): TimePickerDialog {
     val lis = TimePickerDialog.OnTimeSetListener {
       _ : TimePicker, hourOfDay: Int, minute: Int ->
       timeEntry.setText( LocalTime.of(hourOfDay, minute, 0).toString() )
     }
+    // REMEMBER REMEMBER : DON'T use applicationContext, use class variable "context" that is related to this fragment!!!
     return TimePickerDialog(context, lis, defaultDate.hour, defaultDate.minute, true)
   }
 
-  private fun createDatePickerDialog(defaultDate: LocalDateTime, dateEntry: EditText, context: Context): DatePickerDialog {
+  private fun createDatePickerDialog(defaultDate: LocalDateTime, dateEntry: EditText ): DatePickerDialog {
     val lis = DatePickerDialog.OnDateSetListener {
       _ : DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
       // REMEMBER : month and day started at zero
       dateEntry.setText( LocalDate.of(year, monthOfYear +1, dayOfMonth).toString() )
     }
     // REMEMBER : month and day started at 1
+    // REMEMBER REMEMBER : DON'T use applicationContext, use class variable "context" that is related to this fragment!!!
     return DatePickerDialog(context, lis, defaultDate.year, defaultDate.monthValue - 1, defaultDate.dayOfMonth - 1)
   }
 

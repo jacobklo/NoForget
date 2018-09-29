@@ -79,8 +79,8 @@ fun calcUpcomingReminders( memory_data: MemoryData ): List<MemoryEntry> {
 data class MemoryData(val memory_data_id: Int
                  , val memory_entries: ArrayList<MemoryEntry>)
 
-data class MemoryEntry(val memory_entry_id: Int
+data class MemoryEntry(var memory_entry_id: Int
                        , val date_created: LocalDateTime
-                       , val entry_name: String
-                       , val reminder_dates: ArrayList<LocalDateTime>
-                       , val entry_data: String)
+                       , var entry_name: String
+                       , var reminder_dates: ArrayList<LocalDateTime>
+                       , var entry_data: String)

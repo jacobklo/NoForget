@@ -65,4 +65,16 @@ class MainActivity : AppCompatActivity() {
             .commit()
   }
 
+  fun updateMemoryEntryData ( updatedMemoryEntry: MemoryEntry ) {
+    if ( updatedMemoryEntry.memory_entry_id > -1 && updatedMemoryEntry.memory_entry_id < m_MemoryData.memory_entries.size ) {
+      m_MemoryData.memory_entries[ updatedMemoryEntry.memory_entry_id ] = updatedMemoryEntry
+    }
+    else {
+      updatedMemoryEntry.memory_entry_id = m_MemoryData.memory_entries.size;
+      m_MemoryData.memory_entries.add ( updatedMemoryEntry )
+    }
+
+    var melf: MemoryEntryListFragment = fragmentManager.findFragmentByTag("MemoryEntryListFragment") as MemoryEntryListFragment
+    melf.populateMemoryEntryList( calcUpcomingReminders(m_MemoryData), this )
+  }
 }

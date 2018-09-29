@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.Fragment
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,6 +27,13 @@ class MemoryEntryFragment : Fragment() {
     val addDateButton = view.findViewById<Button>( R.id.memory_entry_fragment_add_date )
     addDateButton?.setOnClickListener{
       createNewDateSubView( m_MemoryEntry!!.reminder_dates, m_DefaultReminderDates )
+    }
+
+    val saveButton = view.findViewById<Button>( R.id.memory_entry_fragment_date )
+    saveButton?.setOnClickListener{
+      saveNewDataFromView()
+      updateMemoryEntryData()
+      clearEntry()
     }
 
     return view
@@ -138,6 +146,37 @@ class MemoryEntryFragment : Fragment() {
     return DatePickerDialog(context, lis, defaultDate.year, defaultDate.monthValue - 1, defaultDate.dayOfMonth - 1)
   }
 
+  private fun updateMemoryEntryData() {
+    if ( activity is MainActivity && m_MemoryEntry != null) {
+      (activity as MainActivity).updateMemoryEntryData( m_MemoryEntry!! )
+    }
+  }
+
+  private fun saveNewDataFromView() {
+    val newMemoryEntry = MemoryEntry ( if (m_MemoryEntry == null) -1 else m_MemoryEntry!!.memory_entry_id
+            ,LocalDateTime.now()
+            , view.findViewById<EditText>(R.id.memory_entry_fragment_name).text.toString()
+            , ArrayList<LocalDateTime>()
+            , view.findViewById<EditText>(R.id.memory_entry_fragment_data).text.toString() )
+
+    val datesContainer = view.findViewById<LinearLayout>( R.id.memory_entry_fragment_dates_container )
+
+    for ( i in 0 until datesContainer.childCount ) {
+
+      val dateGroup = datesContainer.getChildAt(i) as LinearLayout;
+
+      val dateEditText = dateGroup.getChildAt(0) as EditText
+      val timeEditText = dateGroup.getChildAt(1) as EditText
+
+      val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+      val reminderDate = LocalDateTime.parse( dateEditText.text.toString() + " " + timeEditText.text.toString(), dateTimeFormatter)
+
+      newMemoryEntry.reminder_dates.add( reminderDate )
+    }
+
+    m_MemoryEntry = newMemoryEntry
+  }
+
   private fun createDefaultReminderDates(): ArrayList<LocalDateTime> {
     val result = ArrayList<LocalDateTime>()
     result.add(LocalDateTime.now().plusDays(1))
@@ -147,5 +186,14 @@ class MemoryEntryFragment : Fragment() {
     result.add(LocalDateTime.now().plusDays(90))
     result.add(LocalDateTime.now().plusDays(365))
     return result
+  }
+
+
+  private fun clearEntry() {
+    view.findViewById<EditText>(R.id.memory_entry_fragment_name).text = null
+    view.findViewById<EditText>(R.id.memory_entry_fragment_data).text = null
+    view.findViewById<LinearLayout>(R.id.memory_entry_fragment_dates_container).removeAllViews()
+    m_MemoryEntry = MemoryEntry(-1, LocalDateTime.now(), "New Entry", ArrayList<LocalDateTime>(), "New Entry")
+    populateView()
   }
 }

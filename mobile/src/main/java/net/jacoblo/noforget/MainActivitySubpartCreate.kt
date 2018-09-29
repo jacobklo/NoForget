@@ -62,8 +62,6 @@ internal fun MainActivity.createNewMemoryEntry() {
 //  m_MemoryData.memory_entries.add(newMemoryEntry)
 
   // clear
-  clearUnsavedEntry()
-
 
   var melf: MemoryEntryListFragment = fragmentManager.findFragmentByTag("MemoryEntryListFragment") as MemoryEntryListFragment
   melf.populateMemoryEntryList( calcUpcomingReminders(m_MemoryData), this )
@@ -94,9 +92,3 @@ internal fun MainActivity.convertDatesViewGroupToDatesArray( dateTimeGroup: View
   return result
 }
 
-
-internal fun MainActivity.clearUnsavedEntry() {
-//  create_name.text = null
-//  create_data.text = null
-//  datesContainer.removeAllViews()
-}

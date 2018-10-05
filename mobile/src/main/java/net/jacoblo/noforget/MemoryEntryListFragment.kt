@@ -2,7 +2,6 @@ package net.jacoblo.noforget
 
 import android.app.Fragment
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.DividerItemDecoration
@@ -35,10 +34,24 @@ class MemoryEntryListFragment: Fragment() {
       itemAnimator = DefaultItemAnimator()
       adapter = titleViewAdapter
       addItemDecoration( DividerItemDecoration( context, LinearLayoutManager.VERTICAL ))
+      visibility = View.VISIBLE
+
       // REMEMBER : instantiate anonymous class using key word object
       addOnItemTouchListener(RecyclerTouchListener(context, this, object : RecyclerTouchListener.ClickListener {
         override fun onClick(view: View, position: Int) {
           if (position < upcomingMemoryEntries.size) {
+            val curMemoryEntryFragmentBundle = Bundle()
+            curMemoryEntryFragmentBundle.putString("MemoryEntryJson", memoryEntryToJson( upcomingMemoryEntries[position] ))
+
+            val curMemoryEntryFragment = MemoryEntryFragment()
+            curMemoryEntryFragment.arguments = curMemoryEntryFragmentBundle
+            fragmentManager.beginTransaction()
+                    .replace(R.id.memory_entry_list_fragment_Item, curMemoryEntryFragment,"CurMemoryEntryFragment")
+                    .commit()
+
+            visibility = View.INVISIBLE
+            memory_entry_list_fragment_Item.visibility = View.VISIBLE
+
             val titleNow = upcomingMemoryEntries[position].entry_name
             Toast.makeText(context,  "$titleNow is selected!", Toast.LENGTH_SHORT).show()
           }

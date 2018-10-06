@@ -22,10 +22,23 @@ class MemoryEntryListFragment: Fragment() {
     super.onCreateView(inflater, container, savedInstanceState)
     val view: View = inflater!!.inflate( R.layout.memory_entry_list, container, false)
 
+    view.setFocusableInTouchMode(true)
+    view.requestFocus()
+    view.setOnKeyListener {
+      _: View, keycode: Int, _: KeyEvent ->
+      if ( keycode == KeyEvent.KEYCODE_BACK ) {
+        memory_entry_list_fragment.visibility = View.VISIBLE
+        memory_entry_list_fragment_Item.visibility = View.INVISIBLE
+        true
+      }
+      else false
+    }
     return view
   }
 
-  fun populateMemoryEntryList(upcomingMemoryEntries: List<MemoryEntry>, context: Context) {
+  fun populateMemoryEntryList() {
+
+    val upcomingMemoryEntries = calcUpcomingReminders(m_MemoryData)
 
     val titleViewManager = LinearLayoutManager(context)
     val titleViewAdapter = MemoryTitleAdapter(upcomingMemoryEntries)
@@ -37,6 +50,7 @@ class MemoryEntryListFragment: Fragment() {
       adapter = titleViewAdapter
       addItemDecoration( DividerItemDecoration( context, LinearLayoutManager.VERTICAL ))
       visibility = View.VISIBLE
+      memory_entry_list_fragment_Item.visibility = View.INVISIBLE
 
       // REMEMBER : instantiate anonymous class using key word object
       addOnItemTouchListener(RecyclerTouchListener(context, this, object : RecyclerTouchListener.ClickListener {
@@ -44,7 +58,7 @@ class MemoryEntryListFragment: Fragment() {
           if (position < upcomingMemoryEntries.size) {
             // REMEMBER : Correct way to pass data to fragment
             val curMemoryEntryFragmentBundle = Bundle()
-            curMemoryEntryFragmentBundle.putString( "MemoryEntryJson", memoryEntryToJson( upcomingMemoryEntries[position] ))
+            curMemoryEntryFragmentBundle.putInt( "MemoryEntryPos", upcomingMemoryEntries[position].memory_entry_id )
 
             // Create new Memory Entry Item page
             val curMemoryEntryFragment = MemoryEntryFragment()
@@ -52,7 +66,6 @@ class MemoryEntryListFragment: Fragment() {
             curMemoryEntryFragment.arguments = curMemoryEntryFragmentBundle
             fragmentManager.beginTransaction()
                     .add( R.id.memory_entry_list_fragment_Item, curMemoryEntryFragment, "MemoryEntryFragment")
-                    .addToBackStack(null)
                     .commit()
 
             visibility = View.INVISIBLE

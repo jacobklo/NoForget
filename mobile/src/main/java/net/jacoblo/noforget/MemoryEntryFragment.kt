@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter
 
 class MemoryEntryFragment : Fragment() {
 
-  var m_MemoryEntry: MemoryEntry? = null
+  var m_MemoryEntry: MemoryEntry = createEmptyMemoryEntry()
   var m_DefaultReminderDates: ArrayList<LocalDateTime> = createDefaultReminderDates()
 
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -26,14 +26,13 @@ class MemoryEntryFragment : Fragment() {
 
     val addDateButton = view.findViewById<Button>( R.id.memory_entry_fragment_add_date )
     addDateButton?.setOnClickListener{
-      createNewDateSubView( m_MemoryEntry!!.reminder_dates, m_DefaultReminderDates )
+      createNewDateSubView( m_MemoryEntry.reminder_dates, m_DefaultReminderDates )
     }
 
     val saveButton = view.findViewById<Button>( R.id.memory_entry_fragment_date )
     saveButton?.setOnClickListener{
       saveNewDataFromView()
       updateMemoryEntryData()
-      clearEntry()
     }
 
     return view
@@ -44,19 +43,18 @@ class MemoryEntryFragment : Fragment() {
     super.onActivityCreated(savedInstanceState)
     val bundle: Bundle? = arguments
     if (bundle != null ) {
-      m_MemoryEntry = readJsonToMemoryEntry ( bundle.getString( "MemoryEntryJson" ))
+      val entryId = bundle.getInt("MemoryEntryPos")
+      m_MemoryEntry = m_MemoryData.memory_entries[ entryId ]
       populateView()
     }
   }
 
   fun populateView() {
-    if (m_MemoryEntry == null ) return
+    view.findViewById<EditText>( R.id.memory_entry_fragment_name ).setText( m_MemoryEntry.entry_name )
+    view.findViewById<EditText>( R.id.memory_entry_fragment_data ).setText( m_MemoryEntry.entry_data )
 
-    view.findViewById<EditText>( R.id.memory_entry_fragment_name ).setText( m_MemoryEntry!!.entry_name )
-    view.findViewById<EditText>( R.id.memory_entry_fragment_data ).setText( m_MemoryEntry!!.entry_data )
-
-    for (i in 0 until m_MemoryEntry!!.reminder_dates.size) {
-      createNewDateSubView( m_MemoryEntry!!.reminder_dates, m_DefaultReminderDates )
+    for (i in 0 until m_MemoryEntry.reminder_dates.size) {
+      createNewDateSubView( m_MemoryEntry.reminder_dates, m_DefaultReminderDates )
     }
   }
 
@@ -155,13 +153,22 @@ class MemoryEntryFragment : Fragment() {
   }
 
   private fun updateMemoryEntryData() {
-    if ( activity is MainActivity && m_MemoryEntry != null) {
-      (activity as MainActivity).updateMemoryEntryData( m_MemoryEntry!! )
+    if ( m_MemoryEntry.memory_entry_id < 0 ) {
+      m_MemoryEntry.memory_entry_id = m_MemoryData.memory_entries.size;
+      m_MemoryData.memory_entries.add( m_MemoryEntry )
+      clearEntry()
+    }
+    else {
+      m_MemoryData.memory_entries[ m_MemoryEntry.memory_entry_id ] = m_MemoryEntry
+    }
+
+    if ( activity is MainActivity ) {
+      (activity as MainActivity).updateMemoryEntryData( m_MemoryEntry )
     }
   }
 
   private fun saveNewDataFromView() {
-    val newMemoryEntry = MemoryEntry ( if (m_MemoryEntry == null) -1 else m_MemoryEntry!!.memory_entry_id
+    val newMemoryEntry = MemoryEntry ( m_MemoryEntry.memory_entry_id
             ,LocalDateTime.now()
             , view.findViewById<EditText>(R.id.memory_entry_fragment_name).text.toString()
             , ArrayList<LocalDateTime>()
@@ -201,7 +208,11 @@ class MemoryEntryFragment : Fragment() {
     view.findViewById<EditText>(R.id.memory_entry_fragment_name).text = null
     view.findViewById<EditText>(R.id.memory_entry_fragment_data).text = null
     view.findViewById<LinearLayout>(R.id.memory_entry_fragment_dates_container).removeAllViews()
-    m_MemoryEntry = MemoryEntry(-1, LocalDateTime.now(), "New Entry", ArrayList<LocalDateTime>(), "New Entry")
+    m_MemoryEntry = createEmptyMemoryEntry()
     populateView()
+  }
+
+  private fun createEmptyMemoryEntry(): MemoryEntry {
+    return MemoryEntry(Integer.MIN_VALUE, LocalDateTime.now(),"", ArrayList<LocalDateTime>(), "")
   }
 }

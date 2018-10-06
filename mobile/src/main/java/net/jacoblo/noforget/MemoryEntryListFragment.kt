@@ -8,6 +8,7 @@ import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import kotlinx.android.synthetic.main.memory_entry_list.*
@@ -20,6 +21,7 @@ class MemoryEntryListFragment: Fragment() {
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
     super.onCreateView(inflater, container, savedInstanceState)
     val view: View = inflater!!.inflate( R.layout.memory_entry_list, container, false)
+
     return view
   }
 
@@ -40,20 +42,22 @@ class MemoryEntryListFragment: Fragment() {
       addOnItemTouchListener(RecyclerTouchListener(context, this, object : RecyclerTouchListener.ClickListener {
         override fun onClick(view: View, position: Int) {
           if (position < upcomingMemoryEntries.size) {
+            // REMEMBER : Correct way to pass data to fragment
             val curMemoryEntryFragmentBundle = Bundle()
-            curMemoryEntryFragmentBundle.putString("MemoryEntryJson", memoryEntryToJson( upcomingMemoryEntries[position] ))
+            curMemoryEntryFragmentBundle.putString( "MemoryEntryJson", memoryEntryToJson( upcomingMemoryEntries[position] ))
 
+            // Create new Memory Entry Item page
             val curMemoryEntryFragment = MemoryEntryFragment()
+
             curMemoryEntryFragment.arguments = curMemoryEntryFragmentBundle
             fragmentManager.beginTransaction()
-                    .replace(R.id.memory_entry_list_fragment_Item, curMemoryEntryFragment,"CurMemoryEntryFragment")
+                    .add( R.id.memory_entry_list_fragment_Item, curMemoryEntryFragment, "MemoryEntryFragment")
+                    .addToBackStack(null)
                     .commit()
 
             visibility = View.INVISIBLE
             memory_entry_list_fragment_Item.visibility = View.VISIBLE
 
-            val titleNow = upcomingMemoryEntries[position].entry_name
-            Toast.makeText(context,  "$titleNow is selected!", Toast.LENGTH_SHORT).show()
           }
         }
 

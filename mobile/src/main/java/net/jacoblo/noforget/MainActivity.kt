@@ -1,21 +1,14 @@
 package net.jacoblo.noforget
 
 import android.os.Bundle
-import android.os.Environment
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.File
-import java.io.FileOutputStream
-import java.io.OutputStreamWriter
-import java.time.LocalDateTime
 
 
-val LOG_TAG = "NoForget Log"
-val m_MemoryData = MemoryData(0, ArrayList<MemoryEntry>() )
+const val LOG_TAG = "NoForget Log"
+var m_MemoryData = MemoryData(0, ArrayList<MemoryEntry>() )
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,20 +18,27 @@ class MainActivity : AppCompatActivity() {
 
   private fun setVisibilities(whichNavigationItemSelectedId: Int): Boolean {
     when (whichNavigationItemSelectedId) {
-      R.id.navigation_home
-    , R.id.navigation_notifications -> {
-        var melf = fragmentManager.findFragmentByTag("MemoryEntryListFragment")
+      R.id.navigation_home -> {
+        val melf = fragmentManager.findFragmentByTag("MemoryEntryListFragment")
         if ( melf != null ) {
           ( melf as MemoryEntryListFragment).onListPage()
         }
 
         memory_entry_item_placeholder.visibility = View.INVISIBLE
         memory_entry_list_placeholder.visibility = View.VISIBLE
+        memory_save_to_file_placeholder.visibility = View.INVISIBLE
         return true
       }
       R.id.navigation_create -> {
         memory_entry_item_placeholder.visibility = View.VISIBLE
         memory_entry_list_placeholder.visibility = View.INVISIBLE
+        memory_save_to_file_placeholder.visibility = View.INVISIBLE
+        return true
+      }
+      R.id.navigation_save_to_file -> {
+        memory_entry_item_placeholder.visibility = View.INVISIBLE
+        memory_entry_list_placeholder.visibility = View.INVISIBLE
+        memory_save_to_file_placeholder.visibility = View.VISIBLE
         return true
       }
     }
@@ -63,23 +63,12 @@ class MainActivity : AppCompatActivity() {
     fragmentManager.beginTransaction()
             .add( R.id.memory_entry_item_placeholder, newMemoryEntryFragment, "MemoryEntryFragmentCreate")
             .commit()
+
+    memory_save_to_file_placeholder
+    // Create new save to file page
+    val newMemorySaveToFileFragment = MemorySaveToFileFragment()
+    fragmentManager.beginTransaction()
+            .add( R.id.memory_save_to_file_placeholder, newMemorySaveToFileFragment, "newMemorySaveToFileFragment")
+            .commit()
   }
-
-  fun updateMemoryEntryData ( updatedMemoryEntry: MemoryEntry ) {
-    saveToFile( "NoForget.txt", memoryDataToJson( m_MemoryData ))
-  }
-}
-
-private fun saveToFile(fileName: String, fileContents: String) {
-  val saveFileDir = File(Environment.getExternalStorageDirectory(), "NoForget")
-  if (!saveFileDir.exists() && !saveFileDir.mkdir()) {
-    Log.e(LOG_TAG, "cannot create save file for NoForget")
-  }
-
-  val saveFilePath = saveFileDir.absolutePath + "/" + fileName
-  val fos = FileOutputStream(saveFilePath)
-  val osw = OutputStreamWriter(fos)
-  osw.write(fileContents)
-  osw.close()
-
 }

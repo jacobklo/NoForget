@@ -7,11 +7,8 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.*
-import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import kotlinx.android.synthetic.main.memory_entry_list.*
 import java.time.Duration
 import java.time.LocalDateTime

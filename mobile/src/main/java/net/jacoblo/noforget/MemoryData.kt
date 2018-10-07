@@ -2,6 +2,7 @@ package net.jacoblo.noforget
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import java.lang.IllegalStateException
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -30,10 +31,16 @@ fun memoryDataToJson(memoryData: MemoryData): String {
   return gson.toJson(memoryData)
 }
 
-fun readJsonToMemoryData(memoryDataJson: String?): MemoryData {
+fun readJsonToMemoryData(memoryDataJson: String?): MemoryData? {
   val gsonBuilder: GsonBuilder = GsonBuilder()
   val gson: Gson = gsonBuilder.create();
-  val md: MemoryData = gson.fromJson(memoryDataJson, MemoryData::class.java)
+  var md: MemoryData? = null
+  try {
+    md = gson.fromJson(memoryDataJson, MemoryData::class.java)
+  }
+  catch ( e: Exception) {
+    e.printStackTrace()
+  }
   return md
 }
 

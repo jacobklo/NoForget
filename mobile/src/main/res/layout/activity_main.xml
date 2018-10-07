@@ -11,17 +11,25 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:id="@+id/memory_entry_list_placeholder" android:layout_marginBottom="55dp"
             app:layout_constraintBottom_toTopOf="@+id/navigation">
-
     </LinearLayout>
 
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:id="@+id/memory_entry_item_placeholder" android:layout_marginBottom="55dp"
             app:layout_constraintBottom_toTopOf="@+id/navigation">
+    </LinearLayout>
 
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/memory_save_to_file_placeholder" android:layout_marginBottom="55dp"
+            app:layout_constraintBottom_toTopOf="@+id/navigation">
     </LinearLayout>
 
     <android.support.design.widget.BottomNavigationView

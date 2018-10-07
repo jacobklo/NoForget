@@ -7,6 +7,7 @@ import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -21,18 +22,6 @@ class MemoryEntryListFragment: Fragment() {
   override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
     super.onCreateView(inflater, container, savedInstanceState)
     val view: View = inflater!!.inflate( R.layout.memory_entry_list, container, false)
-
-    view.setFocusableInTouchMode(true)
-    view.requestFocus()
-    view.setOnKeyListener {
-      _: View, keycode: Int, _: KeyEvent ->
-      if ( keycode == KeyEvent.KEYCODE_BACK ) {
-        memory_entry_list_fragment.visibility = View.VISIBLE
-        memory_entry_list_fragment_Item.visibility = View.INVISIBLE
-        true
-      }
-      else false
-    }
     return view
   }
 
@@ -49,28 +38,12 @@ class MemoryEntryListFragment: Fragment() {
       itemAnimator = DefaultItemAnimator()
       adapter = titleViewAdapter
       addItemDecoration( DividerItemDecoration( context, LinearLayoutManager.VERTICAL ))
-      visibility = View.VISIBLE
-      memory_entry_list_fragment_Item.visibility = View.INVISIBLE
 
       // REMEMBER : instantiate anonymous class using key word object
       addOnItemTouchListener(RecyclerTouchListener(context, this, object : RecyclerTouchListener.ClickListener {
         override fun onClick(view: View, position: Int) {
           if (position < upcomingMemoryEntries.size) {
-            // REMEMBER : Correct way to pass data to fragment
-            val curMemoryEntryFragmentBundle = Bundle()
-            curMemoryEntryFragmentBundle.putInt( "MemoryEntryPos", upcomingMemoryEntries[position].memory_entry_id )
-
-            // Create new Memory Entry Item page
-            val curMemoryEntryFragment = MemoryEntryFragment()
-
-            curMemoryEntryFragment.arguments = curMemoryEntryFragmentBundle
-            fragmentManager.beginTransaction()
-                    .add( R.id.memory_entry_list_fragment_Item, curMemoryEntryFragment, "MemoryEntryFragment")
-                    .commit()
-
-            visibility = View.INVISIBLE
-            memory_entry_list_fragment_Item.visibility = View.VISIBLE
-
+            onItemPage( upcomingMemoryEntries[ position ].memory_entry_id )
           }
         }
 
@@ -79,6 +52,39 @@ class MemoryEntryListFragment: Fragment() {
     }
   }
 
+  fun onListPage() {
+    populateMemoryEntryList()
+    memory_entry_list_fragment.visibility = View.VISIBLE
+    memory_entry_list_fragment_Item.visibility = View.INVISIBLE
+  }
+
+  private fun onItemPage(entryPos: Int) {
+
+    // REMEMBER : Correct way to pass data to fragment
+    val curMemoryEntryFragmentBundle = Bundle()
+    curMemoryEntryFragmentBundle.putInt( "MemoryEntryPos", entryPos )
+
+    // Create new Memory Entry Item page
+    val curMemoryEntryFragment = MemoryEntryFragment()
+
+    curMemoryEntryFragment.arguments = curMemoryEntryFragmentBundle
+    val curMemoryEntryFragmentModi = fragmentManager.findFragmentByTag("MemoryEntryFragmentModi")
+    if ( curMemoryEntryFragmentModi == null ) {
+      fragmentManager.beginTransaction()
+              .add( R.id.memory_entry_list_fragment_Item, curMemoryEntryFragment, "MemoryEntryFragmentModi")
+              .addToBackStack(null)
+              .commit()
+    }
+    else {
+      fragmentManager.beginTransaction()
+              .replace( R.id.memory_entry_list_fragment_Item, curMemoryEntryFragment, "MemoryEntryFragmentModi")
+              .commit()
+    }
+
+
+    memory_entry_list_fragment.visibility = View.INVISIBLE
+    memory_entry_list_fragment_Item.visibility = View.VISIBLE
+  }
 }
 
 class MemoryTitleAdapter(private val memoryTitleList: List<MemoryEntry>) : RecyclerView.Adapter<MemoryTitleAdapter.MyViewHolder>() {

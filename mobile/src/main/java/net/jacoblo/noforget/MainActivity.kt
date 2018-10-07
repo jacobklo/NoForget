@@ -27,6 +27,11 @@ class MainActivity : AppCompatActivity() {
     when (whichNavigationItemSelectedId) {
       R.id.navigation_home
     , R.id.navigation_notifications -> {
+        var melf = fragmentManager.findFragmentByTag("MemoryEntryListFragment")
+        if ( melf != null ) {
+          ( melf as MemoryEntryListFragment).onListPage()
+        }
+
         memory_entry_item_placeholder.visibility = View.INVISIBLE
         memory_entry_list_placeholder.visibility = View.VISIBLE
         return true
@@ -56,14 +61,11 @@ class MainActivity : AppCompatActivity() {
     // Create new Memory Entry Item page
     val newMemoryEntryFragment = MemoryEntryFragment()
     fragmentManager.beginTransaction()
-            .add( R.id.memory_entry_item_placeholder, newMemoryEntryFragment, "MemoryEntryFragment")
+            .add( R.id.memory_entry_item_placeholder, newMemoryEntryFragment, "MemoryEntryFragmentCreate")
             .commit()
   }
 
   fun updateMemoryEntryData ( updatedMemoryEntry: MemoryEntry ) {
-    var melf: MemoryEntryListFragment = fragmentManager.findFragmentByTag("MemoryEntryListFragment") as MemoryEntryListFragment
-    melf.populateMemoryEntryList( )
-
     saveToFile( "NoForget.txt", memoryDataToJson( m_MemoryData ))
   }
 }

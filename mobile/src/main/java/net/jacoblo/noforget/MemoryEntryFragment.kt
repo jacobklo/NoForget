@@ -35,6 +35,11 @@ class MemoryEntryFragment : Fragment() {
       updateMemoryEntryData()
     }
 
+    val deleteButton = view.findViewById<Button>( R.id.memory_entry_fragment_delete )
+    deleteButton?.setOnClickListener{
+      deleteMemoryEntry()
+    }
+
     return view
   }
 
@@ -44,8 +49,10 @@ class MemoryEntryFragment : Fragment() {
     val bundle: Bundle? = arguments
     if (bundle != null ) {
       val entryId = bundle.getInt("MemoryEntryPos")
-      m_MemoryEntry = m_MemoryData.memory_entries[ entryId ]
-      populateView()
+      if ( entryId >= 0 && entryId < m_MemoryData.memory_entries.size) {
+        m_MemoryEntry = m_MemoryData.memory_entries[ entryId ]
+        populateView()
+      }
     }
   }
 
@@ -161,10 +168,7 @@ class MemoryEntryFragment : Fragment() {
     else {
       m_MemoryData.memory_entries[ m_MemoryEntry.memory_entry_id ] = m_MemoryEntry
     }
-
-    if ( activity is MainActivity ) {
-      (activity as MainActivity).updateMemoryEntryData( m_MemoryEntry )
-    }
+    Toast.makeText(context, "This Memory Entry is saved!", Toast.LENGTH_LONG).show()
   }
 
   private fun saveNewDataFromView() {
@@ -192,6 +196,14 @@ class MemoryEntryFragment : Fragment() {
     m_MemoryEntry = newMemoryEntry
   }
 
+  private fun deleteMemoryEntry() {
+    if ( m_MemoryEntry.memory_entry_id < 0 || m_MemoryEntry.memory_entry_id >= m_MemoryData.memory_entries.size ) return
+
+    m_MemoryData.memory_entries.removeAt( m_MemoryEntry.memory_entry_id )
+    m_MemoryEntry.memory_entry_id = Int.MIN_VALUE
+    Toast.makeText(context, "This Memory Entry is deleted!", Toast.LENGTH_LONG).show()
+  }
+
   private fun createDefaultReminderDates(): ArrayList<LocalDateTime> {
     val result = ArrayList<LocalDateTime>()
     result.add(LocalDateTime.now().plusDays(1))
@@ -213,6 +225,6 @@ class MemoryEntryFragment : Fragment() {
   }
 
   private fun createEmptyMemoryEntry(): MemoryEntry {
-    return MemoryEntry(Integer.MIN_VALUE, LocalDateTime.now(),"", ArrayList<LocalDateTime>(), "")
+    return MemoryEntry(Int.MIN_VALUE, LocalDateTime.now(),"", ArrayList<LocalDateTime>(), "")
   }
 }

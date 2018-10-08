@@ -104,12 +104,27 @@ class MemoryTitleAdapter(private val memoryTitleList: List<MemoryEntry>) : Recyc
     val currentEntry = memoryTitleList[position]
     holder.entryTitle.text = currentEntry.entry_name
     holder.entryData.text = currentEntry.entry_data
+    holder.entryReminderLeft.text = ""
+
+    if (currentEntry.reminder_dates.size <= 0) return
 
     val zoneId = ZoneId.systemDefault()
-    var remindingTimeLeftThisEntry: LocalDateTime = currentEntry.reminder_dates.first {
-      it -> it.atZone(zoneId).toEpochSecond() > LocalDateTime.now().atZone(zoneId).toEpochSecond()
+    var remindingTimeLeftThisEntry: LocalDateTime = currentEntry.reminder_dates[0]
+    val remindingDuration = calcDuration( LocalDateTime.now(), remindingTimeLeftThisEntry)
+    var reminderString = ""
+    if ( remindingDuration.toMillis() in 0..3600000 || remindingDuration.toMillis() in -3600000..0 ) {
+      reminderString += remindingDuration.toMinutes().toString() + " minutes"
     }
-    val reminderString = "" + calcDuration( LocalDateTime.now(), remindingTimeLeftThisEntry).toHours().toString() + " hours left"
+    else if ( remindingDuration.toMillis() in 0..86400000 || remindingDuration.toMillis() in -86400000..0 ) {
+      reminderString += remindingDuration.toHours().toString() + " hours"
+    }
+    else {
+      reminderString += remindingDuration.toDays().toString() + " days"
+    }
+    if ( remindingDuration.toMillis() > 0 ) {
+      reminderString += " left"
+    }
+
     holder.entryReminderLeft.text = reminderString
   }
 

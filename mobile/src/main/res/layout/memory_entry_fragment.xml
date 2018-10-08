@@ -8,7 +8,7 @@
                                              tools:context=".MemoryEntryFragment">
 
   <EditText
-          android:layout_width="wrap_content"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:inputType="textPersonName"
           android:ems="10"
@@ -16,13 +16,15 @@
           app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
           android:hint="Name"/>
   <EditText
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
+          android:layout_width="match_parent"
+          android:layout_height="60dp"
           android:inputType="textPersonName"
           android:ems="10"
           android:id="@+id/memory_entry_fragment_data"
+          android:lines="2"
+          android:maxLines="10"
           app:layout_constraintTop_toBottomOf="@+id/memory_entry_fragment_name"
-          android:hint="Data" tools:layout_editor_absoluteX="0dp"/>
+          android:hint="Data" tools:layout_editor_absoluteX="0dp" android:singleLine="false" android:minLines="2"/>
 
   <LinearLayout
           android:id="@+id/memory_entry_fragment_dates_container"

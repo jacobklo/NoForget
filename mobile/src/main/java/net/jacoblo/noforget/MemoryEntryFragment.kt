@@ -31,8 +31,9 @@ class MemoryEntryFragment : Fragment() {
 
     val saveButton = view.findViewById<Button>( R.id.memory_entry_fragment_date )
     saveButton?.setOnClickListener{
-      saveNewDataFromView()
-      updateMemoryEntryData()
+      if (saveNewDataFromView() ) {
+        updateMemoryEntryData()
+      }
     }
 
     val deleteButton = view.findViewById<Button>( R.id.memory_entry_fragment_delete )
@@ -168,15 +169,21 @@ class MemoryEntryFragment : Fragment() {
     else {
       m_MemoryData.memory_entries[ m_MemoryEntry.memory_entry_id ] = m_MemoryEntry
     }
-    Toast.makeText(context, "This Memory Entry is saved!", Toast.LENGTH_LONG).show()
+    saveToFileOpration(context)
   }
 
-  private fun saveNewDataFromView() {
+  private fun saveNewDataFromView(): Boolean {
+    val entryName = view.findViewById<EditText>(R.id.memory_entry_fragment_name).text
+    val entryData = view.findViewById<EditText>(R.id.memory_entry_fragment_data).text
+    if ( entryName.isEmpty() && entryData.isEmpty() ) {
+      return false;
+    }
+
     val newMemoryEntry = MemoryEntry ( m_MemoryEntry.memory_entry_id
             ,LocalDateTime.now()
-            , view.findViewById<EditText>(R.id.memory_entry_fragment_name).text.toString()
+            , entryName.toString()
             , ArrayList<LocalDateTime>()
-            , view.findViewById<EditText>(R.id.memory_entry_fragment_data).text.toString() )
+            , entryData.toString() )
 
     val datesContainer = view.findViewById<LinearLayout>( R.id.memory_entry_fragment_dates_container )
 
@@ -194,6 +201,7 @@ class MemoryEntryFragment : Fragment() {
     }
 
     m_MemoryEntry = newMemoryEntry
+    return true
   }
 
   private fun deleteMemoryEntry() {

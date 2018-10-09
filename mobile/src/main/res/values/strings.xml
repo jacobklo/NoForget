@@ -3,4 +3,9 @@
     <string name="title_home">Home</string>
     <string name="title_create">Create</string>
     <string name="title_save_to_file">File</string>
+    <string name="entry_name">Name</string>
+    <string name="entry_data">Data</string>
+    <string name="add_date_butt">Add Date</string>
+    <string name="save_butt">Save</string>
+    <string name="delete_butt">Delete</string>
 </resources>

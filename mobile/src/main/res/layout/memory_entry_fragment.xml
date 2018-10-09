@@ -8,23 +8,28 @@
                                              tools:context=".MemoryEntryFragment">
 
   <EditText
+          android:id="@+id/memory_entry_fragment_name"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:inputType="textPersonName"
           android:ems="10"
-          android:id="@+id/memory_entry_fragment_name"
-          app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent"
-          android:hint="Name"/>
+          android:gravity="top"
+          android:hint="@string/entry_name"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          />
   <EditText
+          android:id="@+id/memory_entry_fragment_data"
           android:layout_width="match_parent"
           android:layout_height="60dp"
-          android:inputType="textPersonName"
+          android:inputType="textCapSentences|textMultiLine"
           android:ems="10"
-          android:id="@+id/memory_entry_fragment_data"
-          android:lines="2"
+          android:minLines="2"
           android:maxLines="10"
+          android:hint="@string/entry_data"
+          android:gravity="top"
           app:layout_constraintTop_toBottomOf="@+id/memory_entry_fragment_name"
-          android:hint="Data" tools:layout_editor_absoluteX="0dp" android:singleLine="false" android:minLines="2"/>
+          tools:layout_editor_absoluteX="0dp"/>
 
   <LinearLayout
           android:id="@+id/memory_entry_fragment_dates_container"
@@ -46,26 +51,29 @@
           tools:layout_editor_absoluteX="0dp" app:layout_constraintBottom_toBottomOf="parent"
   >
     <Button
-            android:text="Add Date"
+            android:text="@string/add_date_butt"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:id="@+id/memory_entry_fragment_add_date"
-    />
+            style="@android:style/Widget.Material.Button.Borderless.Colored"
+            android:background="@android:color/holo_orange_dark" android:textColor="@android:color/white"/>
     <Button
-            android:text="Save"
+            android:text="@string/save_butt"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:id="@+id/memory_entry_fragment_date"
-    />
+            style="@android:style/Widget.Material.Button.Borderless.Colored"
+            android:background="@android:color/holo_blue_dark" android:textColor="@android:color/white"/>
     <Button
-            android:text="Delete"
+            android:text="@string/delete_butt"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:id="@+id/memory_entry_fragment_delete"
-    />
+            style="@android:style/Widget.Material.Button.Borderless.Colored"
+            android:background="@android:color/holo_red_dark" android:textColor="@android:color/white"/>
 
 
   </LinearLayout>
